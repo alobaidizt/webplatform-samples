@@ -231,6 +231,9 @@ if (!('webkitSpeechRecognition' in window)) {
   recognition.interimResults = true;
 
   recognition.onstart = function() {
+    start_timestamp = event.timeStamp;
+    console.log("start");
+    console.log(new Date(start_timestamp));
     recognizing = true;
     showInfo('info_speak_now');
     start_img.src = 'mic-animate.gif';
@@ -286,6 +289,20 @@ if (!('webkitSpeechRecognition' in window)) {
       if (event.results[i].isFinal) {
         final_transcript += event.results[i][0].transcript;
       } else {
+        end_timestamp = event.timeStamp;
+        time_diff = new Date(end_timestamp) - new Date(start_timestamp);
+        console.log("end");
+        console.log(time_diff);
+        console.log(event.results[i][0].transcript);
+        if ((event.results[i][0].transcript).indexOf('rebound') >= 0)
+        {
+          var min = Math.floor(time_diff / 60000);
+          var sec = ((time_diff % 60000) / 1000).toFixed(0);
+          url = "https://www.youtube.com/watch?v=f5iA3yq4KUk#t=" + min + 'm' + sec + 's'
+          <!--window.alert(url)-->
+          <!--window.open(url,'_blank');-->
+          recognition.stop()
+        }
         interim_transcript += event.results[i][0].transcript;
       }
     }
